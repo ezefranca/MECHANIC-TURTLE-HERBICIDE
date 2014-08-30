@@ -1,6 +1,3 @@
-BCC-2s14-PI4-Webcrawler
-=======================
-
 Sobre
 =======
 MECHANIC-TURTLE-HERBICIDE

@@ -4,6 +4,7 @@ from selenium.webdriver import Firefox # pip install selenium
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
+#EXEMPLO MANEIRO DE FUNCAO
 def crawlar(browser , numPagina):
 	return
 
@@ -25,11 +26,8 @@ browser.find_element_by_xpath("//select[@id='cmbPeriodo_Final']/option[@value='2
 element = browser.find_element_by_id('imgPesquisar')
 element.click()
 
-
-
 #ESPERAR CARREGAR
 browser.implicitly_wait(10) 
-
 
 #CONTAR AS PEGINAS GERADAS
 count = 0
@@ -54,15 +52,15 @@ for pagina in paginas:
 """
 #PARA A QUANTIDADE DE PAGINAS QUE FORAM GERADAS
 
+#MARCAR O NUMERO DA PAGINA
 numPagina = 1
 
+#PARA CADA GRUPO DE PAGINAS
 for x in xrange(1,3):
-
+	#PARA CADA PAGINA
 	for x in range(1, 20):
-		
 		#PEGA AS INFORMACOES DAS LINHAS
 		linhas = browser.find_element_by_id('Grid').find_elements_by_tag_name('tr')
-
 		for linha in linhas:
 			ultimo = linha;
 			print(linha.text)
@@ -83,7 +81,7 @@ for x in xrange(1,3):
 
 	for linha in linhas:
 		ultimo = linha;
-
+	#PASSAR PARA O PROXIMO GRUPO DE PAGINAS GG
 	paginas = ultimo.find_element_by_tag_name('td').find_elements_by_tag_name('a')
 
 	for pagina in paginas:

@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # coding=utf8
 
+#import psycopg2
 import math
+
 from random import randint
 from threading import Thread
 
@@ -27,7 +29,7 @@ produtosCesta = ("Carne", "Leite", "Feijão", "Arroz", "Farinha", "Batata", "Tom
 #configuragoes da tabela
 alturaTabela = 700      #valor da altura em pixels               #<-valor temporario
 comprimentoTabela = 800 #valor do comprimento em pixels          #<-valor temporario
-qteColunas = 3          # qte de ecolunas, ou datas para mostrar #<-valor temporario
+qteColunas = 3          # qte de colunas, ou datas para mostrar  #<-valor temporario
 
 divs = qteColunas - 1   # qte de "hastes" divisorias
 space =  30             # qte de pixels para transicao de nivel
@@ -59,11 +61,11 @@ for x in range(0, qte):
     turtles.append( alberto )
 
 
-#prepara os valores para desenhas a tabela
+#prepara os valores para desenhar a tabela
 alturaItensRegular = alturaTabela/qte
 
-#-corassaum dos dados de desenho 1-#
-#----------------------------------#
+#---- corassaum dos dados de desenho ----#
+#----------------------------------------#
 tuplaitens = (0,1,2,3,4,5,6,7,8,9,10,12,13) # porcentage dos precos de cada produto em uma data vindos do BD
 
 #itens1
@@ -71,67 +73,77 @@ tuplaitens = (0,1,2,3,4,5,6,7,8,9,10,12,13) # porcentage dos precos de cada prod
 #itens3
 itens = ()#porcentagens aditivas dos precos em cada lugar da tupla (tipo fibonacci sqn)
           #o primeiro valor precisa ser 0%
-        #exemplo: (0%, 10%, 15%, 35%, 65%, 90%, 100%)
+          #exemplo: (0%, 10%, 15%, 35%, 65%, 90%, 100%)
 
 #aki converte as %s em em valor de pixel para desenhar
 alturas = 0
 for x in range(0, qte + 1):
     tuplaAlturas = (alturas,)
-    itens = itens + tuplaAlturas #<-valor temporario
+    itens = itens + tuplaAlturas  #<-valor temporario
     alturas = alturas + alturaItensRegular
 
 
-#data = (itens1, itens2, itens3)
-data = ()
+#datas = (itens1, itens2, itens3)
+datas = ()
 for x in range(0, qteColunas):
-    tupladata = (itens,)
-    data = data + tupladata
-#----------------------------------#
+    tupladatas = (itens,)
+    datas = datas + tupladatas
+#----------------------------------------#
 
 
 #comeca a desenhar e pintar a tabela em cascata
+# ate este commit nao há mais bugs aki
+
 nivel = 0
 for viera in turtles:
     viera.begin_fill()
-    #viera.speed(2)
+
     #o primeiro valor de itens no vetor para a tabela precisa ser 0, pra fazer a borda superior bunitinho
     penup()
-    viera.goto(-comprimentoTabela/2        , alturaTabela/2 -  data[0][nivel]  ) #valores 1
+    viera.goto(-comprimentoTabela/2        , alturaTabela/2 -  datas[0][nivel] ) #valores 1
     pendown()
-    viera.goto(-comprimentoTabela/2 + cBase, alturaTabela/2 -  data[0][nivel]  ) #valores 1
+    viera.goto(-comprimentoTabela/2 + cBase, alturaTabela/2 -  datas[0][nivel] ) #valores 1
     #o espaco entre esses 2 pontos forma o retangulozinho
     
-   # a primeira coluna(data) precisa ser feita assim, porem se as %'s nos itens vierem
-   # numa tupla de tuplas(ideia de matriz, nao confundir com array de arrays de python)
-   # da pra melhorar isso 'for' assim se nao tem que fazer na mao todas as 'iteracoes'
-   # desse 'for' na mao, atraves das colunas relevantes
+    #print -comprimentoTabela/2
+    
+    # a primeira coluna(data) precisa ser feita assim, porem se as %'s nos itens vierem
+    # numa tupla de tuplas(ideia de matriz, nao confundir com array de arrays de python)
+    # da pra melhorar isso 'for' assim se nao tem que fazer na mao todas as 'iteracoes'
+    # desse 'for' na mao, atraves das colunas relevantes
+    
     distAtual = cBase
+    #valorDeTeste = -10
     for coluna in range(1, qteColunas):
-        #viera.speed(1)
-        viera.goto(-comprimentoTabela/2 + distAtual + space , alturaTabela/2 -  data[coluna][nivel] ) #valores 2
-        #viera.speed(9)
-        distAtual = cBase*(coluna+1)
-        viera.goto(-comprimentoTabela/2 + distAtual         , alturaTabela/2 -  data[coluna][nivel] ) #valores 2
+        distAtual += space
+        viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 -  datas[coluna][nivel] ) #valores n
+        distAtual += cBase
+        viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 -  datas[coluna][nivel] ) #valores n
+    
+#        valorDeTeste = valorDeTeste*-1
+#        distAtual += space
+#        viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 -  datas[coluna][nivel] +valorDeTeste) #valores n
+#        print -comprimentoTabela/2 + distAtual
+#        distAtual += cBase
+#        viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 -  datas[coluna][nivel] +valorDeTeste) #valores n
+#        print -comprimentoTabela/2 + distAtual
 
-    viera.goto( comprimentoTabela/2 , alturaTabela/2 -  data[coluna][nivel] ) #borda direita
-    viera.goto( comprimentoTabela/2 , -alturaTabela/2) #canto inferior direito
-    viera.goto(-comprimentoTabela/2 , -alturaTabela/2) #canto inferior esquerdo
-    viera.goto(-comprimentoTabela/2 , alturaTabela/2 -  data[coluna][nivel]  ) #fecha o poligono
+
+    viera.goto(  -comprimentoTabela/2 + distAtual ,  alturaTabela/2 -  datas[coluna][nivel] )#borda direita
+    viera.goto(  -comprimentoTabela/2 + distAtual , -alturaTabela/2 )                        #canto inferior direito
+    viera.goto( -comprimentoTabela/2 , -alturaTabela/2 )                                     #canto inferior esquerdo
+    viera.goto( -comprimentoTabela/2 ,  alturaTabela/2 -  datas[0][nivel] )                  #fecha o poligono para a turtle pintar
 
     viera.end_fill()
 
+    #escreve o nome do produto
     penup()
-    goto(-comprimentoTabela/2 -5, alturaTabela/2 -(data[0][nivel]+ data[0][nivel +1])/2 -18 )
+    goto(-comprimentoTabela/2 -5, alturaTabela/2 -(datas[0][nivel]+ datas[0][nivel +1])/2 -18 )
     write( produtosCesta[nivel], move=False, align="right", font=('Arial', 18, 'normal'))
-
+   #write("manoloooo", move=False, align="right", font=('Arial', 18, 'normal'))
 
     nivel += 1
 
-
-#penup()
-#goto(0,-100)
-#pendown()
-#circle(100)
-#write("manoloooo", font=('Arial', 18, 'normal'))
-
 done()
+
+

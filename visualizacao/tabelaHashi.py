@@ -9,6 +9,10 @@ from threading import Thread
 
 from turtle import *
 
+def modTupByIndex(tup, index, ins):
+    return tuple(tup[0:index]) + (ins,) + tuple(tup[index+1:])
+
+
 cor0  = (251/255.0,  16/255.0,  34/255.0)
 cor1  = (252/255.0,  24/255.0, 128/255.0)
 cor2  = (237/255.0,  40/255.0, 251/255.0)
@@ -24,7 +28,25 @@ cor11 = ( 14/255.0,  38/255.0, 251/255.0)
 cor12 = ( 12/255.0,  91/255.0, 183/255.0)
 cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor11, cor12)
 
-produtosCesta = ("Carne", "Leite", "Feijão", "Arroz", "Farinha", "Batata", "Tomate", "Pão Francês", "Café em Pó", "Banana", "Açúcar", "Óleo", "Manteiga")
+#produtosCesta = ("Carne", "Leite", "Feijão", "Arroz", "Farinha", "Batata", "Tomate", "Pão Francês", "Café em Pó", "Banana", "Açúcar", "Óleo", "Manteiga")
+produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomatede mesa")
+
+'''               julho/1994     julho/2004   julho/2014
+"Açúcar"            0,80           0,95         1,85   kg
+"Arroz"             0,67           2,01         2,48   duzia.
+"Banana Prata"      0,93           2,18         4,89   kg
+"Batata"            0,69           1,44         2,99   500g
+"Café em Pó"        3,51           4,19         6,93   kg
+"Carne Bovina"      2,86           6,97        18,05   kg
+"Farinha de trigo"  0,53           1,64         2,80   kg
+"Feijão"            1,12           2,43         3,71   litro
+"Leite tipo B"      0,63           1,66         2,85   litro
+"Manteiga"          1,08           2,80         3,47   200g
+"Óleo de Soja"      0,96           2,39         4,75   900ml
+"Pão Francês"       0,06           0,20         9,05  u.50g / kg
+"Tomate de mesa"    0,54           2,32         4,24   kg
+'''
+
 
 #configuragoes da tabela
 alturaTabela = 700      #valor da altura em pixels               #<-valor temporario
@@ -61,11 +83,78 @@ for x in range(0, qte):
     turtles.append( alberto )
 
 
+
+''' valores do banco
+                     julho/1994     julho/2004   julho/2014
+    "Açúcar"            0,80           0,95         1,85   kg
+    "Arroz"             0,67           2,01         2,48   kg
+    "Banana Prata"      0,93           2,18         4,89   dz
+    "Batata"            0,69           1,44         2,99   kg
+    "Café em Pó"        3,51           4,19         6,93   500g
+    "Carne Bovina"      2,86           6,97        18,05   kg
+    "Farinha de trigo"  0,53           1,64         2,80   kg
+    "Feijão"            1,12           2,43         3,71   litro
+    "Leite tipo B"      0,63           1,66         2,85   litro
+    "Manteiga"          1,08           2,80         3,47   200g
+    "Óleo de Soja"      0,96           2,39         4,75   900ml
+    "Pão Francês"       1,20           4,00         9,05   kg
+    "Tomate de mesa"    0,54           2,32         4,24   kg
+    '''
+
+''' qte para cesta
+    Açúcar       kg  3,0
+    Arroz        kg  3,0
+    Banana     unid. 90
+    Batata       kg  6,0
+    Café em Pó   kg  0,600
+    Carne        kg  6,0
+    Farinha      kg  1,5
+    Feijão       kg  4,5
+    Leite         l  7,5
+    Manteiga    kg  0,750
+    Óleo         ml  750
+    Pão Francês   kg 6,0
+    Tomate        kg 9,0
+    '''
+
+
+
 #prepara os valores para desenhar a tabela
 alturaItensRegular = alturaTabela/qte
 
 #---- corassaum dos dados de desenho ----#
 #----------------------------------------#
+julho94valores = (0.80*3.0,
+                0.67*3.0,
+                0.93*7.5,
+                0.69*6.0,
+                3.51*1.2,
+                2.86*6.0,
+                0.53*1.5,
+                1.12*4.5,
+                0.63*7.5,
+                1.08*3.75,
+                0.96*1.2,
+                1.20*6.0,
+                0.54*9.0)
+
+julho94total = 0
+for x in range(0, qte):
+    julho94total += julho94valores[x]
+
+julho94porcentagestemp = (0,)
+for x in range(0, qte):
+    tuplaTemporaria = (julho94valores[x]*100/julho94total,)
+    julho94porcentagestemp = julho94porcentagestemp + tuplaTemporaria
+
+julho94porcentages = (0, )
+#for i in range(0, qte):
+
+# continua aki---
+print modTupByIndex((1,2,3),2,"a")
+
+
+
 tuplaitens = (0,1,2,3,4,5,6,7,8,9,10,12,13) # porcentage dos precos de cada produto em uma data vindos do BD
 
 #itens1

@@ -14,7 +14,7 @@ def modTupByIndex(tup, index, ins):
 
 
 #metodo/funcao pra segunda visualizacao
-def valorTotalDaCesta(valoresNumaData)
+def valorTotalDaCesta(valoresNumaData):
     qteNaCestaBasica = (3.0, 3.0, 7.5, 6.0, 1.2, 6.0, 1.5, 4.5, 7.5, 3.75, 1.2, 6.0, 9.0)
     for x in range(0, qte):
         valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
@@ -86,7 +86,6 @@ def converteValoresDoBancoEmPixelsPraDesenhar (valoresNumaData): #nome auto-expl
 
     # dataAlturas eh o que precisamos agora para desenhar com a turtle
     return dataAlturas
-
 
 
 cor0  = (251/255.0,  16/255.0,  34/255.0)
@@ -177,34 +176,19 @@ julho04alturas = converteValoresDoBancoEmPixelsPraDesenhar(julho04valores)
 julho14alturas = converteValoresDoBancoEmPixelsPraDesenhar(julho14valores)
 
 
-##antigo de teste
-#alturaItensRegular = alturaTabela/qte
-#
-#tuplaitens = (0,1,2,3,4,5,6,7,8,9,10,12,13) # porcentagens dos precos de cada produto em uma data vindos do BD
-#
-##itens1
-##itens2
-##itens3
-#itens = ()#porcentagens aditivas dos precos em cada lugar da tupla (tipo fibonacci sqn)
-#          #o primeiro valor precisa ser 0%
-#          #exemplo: (0%, 10%, 15%, 35%, 65%, 90%, 100%)
-#
-##aki converte as %s em em valor de pixel para desenhar
-#alturas = 0
-#for x in range(0, qte + 1):
-#    tuplaAlturas = (alturas,)
-#    itens = itens + tuplaAlturas  #<-valor temporario
-#    alturas = alturas + alturaItensRegular
-
-
-#datas = (itens1, itens2, itens3)
-#datas = ()
-#for x in range(0, qteColunas):
-#    tupladatas = (itens,)
-#    datas = datas + tupladatas
-
 datas = (julho94alturas, julho04alturas, julho14alturas)
 #--------------------------------------------------------------------------------------#
+
+
+penup()
+color("black")
+alturaEscrita = alturaTabela/2 + 10
+goto( -comprimentoTabela/4 , alturaEscrita)
+write( "Julho de 1994", move=False, align="right", font=('Arial', 18, 'normal'))
+goto( -comprimentoTabela/4 +(space +cBase), alturaEscrita)
+write( "Julho de 2004", move=False, align="right", font=('Arial', 18, 'normal'))
+goto( -comprimentoTabela/4 +2*(space +cBase), alturaEscrita )
+write( "Julho de 2014", move=False, align="right", font=('Arial', 18, 'normal'))
 
 
 #comeca a desenhar e pintar a tabela em cascata
@@ -221,12 +205,6 @@ for viera in turtles:
     viera.goto(-comprimentoTabela/2 + cBase, alturaTabela/2 -  datas[0][nivel] ) #valores 1
     #o espaco entre esses 2 pontos forma o retangulozinho
     
-    #print -comprimentoTabela/2
-    
-    # a primeira coluna(data) precisa ser feita assim, porem se as %'s nos itens vierem
-    # numa tupla de tuplas(ideia de matriz, nao confundir com array de arrays de python)
-    # da pra melhorar isso 'for' assim se nao tem que fazer na mao todas as 'iteracoes'
-    # desse 'for' na mao, atraves das colunas relevantes
     
     distAtual = cBase
     #valorDeTeste = -10
@@ -235,14 +213,6 @@ for viera in turtles:
         viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 -  datas[coluna][nivel] ) #valores n
         distAtual += cBase
         viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 -  datas[coluna][nivel] ) #valores n
-    
-#        valorDeTeste = valorDeTeste*-1
-#        distAtual += space
-#        viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 -  datas[coluna][nivel] +valorDeTeste) #valores n
-#        print -comprimentoTabela/2 + distAtual
-#        distAtual += cBase
-#        viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 -  datas[coluna][nivel] +valorDeTeste) #valores n
-#        print -comprimentoTabela/2 + distAtual
 
 
     viera.goto(  -comprimentoTabela/2 + distAtual ,  alturaTabela/2 -  datas[coluna][nivel] )#borda direita
@@ -260,6 +230,7 @@ for viera in turtles:
    #write("manoloooo", move=False, align="right", font=('Arial', 18, 'normal'))
 
     nivel += 1
+
 
 done()
 

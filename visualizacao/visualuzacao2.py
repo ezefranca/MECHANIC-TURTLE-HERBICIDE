@@ -41,13 +41,13 @@ cor12 = ( 12/255.0,  91/255.0, 183/255.0)
 cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor11, cor12)
 
 
-produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomatede mesa")
 
 #configuragoes da tabela
 alturaGrafico= 600      #valor da altura em pixels               #<-valor temporario
 comprimentoGrafico = 700 #valor do comprimento em pixels          #<-valor temporario
 qte = 13 #qte de itens na cesta
 
+fatorAmpliacao = 1.5
 
 #configura e posicia a turtle original para ser copiada
 color('black')
@@ -57,26 +57,49 @@ showturtle()
 st()
 speed(0)
 tracer(1, 1)
-
 penup()
 goto(0, 0)
-#left(90)
-pendown()
 
+#linha horizontal
 tutsGraficoTempo = clone()
-
 tutsGraficoTempo.penup()
-tutsGraficoTempo.goto(-100, 0)
+tutsGraficoTempo.goto( -comprimentoGrafico/2 -100, -alturaGrafico/2)
 tutsGraficoTempo.pendown()
-tutsGraficoTempo.goto(comprimentoGrafico, 0)
+tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2)
+tutsGraficoTempo.penup()
+tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2 - 20)
+tutsGraficoTempo.write("Tempo" , move=False, align="right", font=('Arial', 14, 'normal'))
+tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2)
 
+#linha vertical
 left(90)
 tutsGraficoValor = clone()
 tutsGraficoValor.penup()
-tutsGraficoValor.goto(0, -100)
+tutsGraficoValor.goto(-comprimentoGrafico/2, -alturaGrafico/2 -100)
 tutsGraficoValor.pendown()
-tutsGraficoValor.goto(0, alturaGrafico)
+tutsGraficoValor.goto( -comprimentoGrafico/2 , alturaGrafico/2)
+tutsGraficoValor.penup()
+tutsGraficoValor.goto( -comprimentoGrafico/2 +80, alturaGrafico/2)
+tutsGraficoValor.write("valor da Cesta Basica" , move=False, align="right", font=('Arial', 14, 'normal'))
+tutsGraficoValor.goto( -comprimentoGrafico/2 , alturaGrafico/2)
 
+
+#escreve os valores a cada 50 reais pra termos nocao da proporcao
+penup()
+goto(-comprimentoGrafico/2, -alturaGrafico/2)
+
+guiaReais = 0
+while guiaReais*fatorAmpliacao < alturaGrafico:
+    novaGuia = guiaReais * fatorAmpliacao
+    penup()
+    goto(-comprimentoGrafico/2 -10, -alturaGrafico/2 + novaGuia)
+    write( guiaReais , move=False, align="right", font=('Arial', 14, 'normal'))
+    pendown()
+    goto(comprimentoGrafico/2, -alturaGrafico/2 + novaGuia)
+    guiaReais += 50
+
+
+produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomate de mesa")
 #valor de por "unidade" de cada item no banco, nas mesma ordem do produtosCesta
 julho94valores = (0.80, 0.67, 0.93, 0.69, 3.51, 2.86, 0.53, 1.12, 0.63, 1.08, 0.96, 1.20, 0.54)
 julho04valores = (0.95, 2.01, 2.18, 1.44, 4.19, 6.97, 1.64, 2.43, 1.66, 2.80, 2.39, 4.00, 2.32)
@@ -87,18 +110,36 @@ julho04PrecoFinal = valorTotalDaCesta(julho04valores)
 julho14PrecoFinal = valorTotalDaCesta(julho14valores)
 
 
-#for viera in turtles:
-#    viera.begin_fill()
-#
-#
-#    viera.end_fill()
-#
-#    #escreve o nome do produto
-#    penup()
-#    color( cores[nivel] )
-#    write( produtosCesta[nivel], move=False, align="right", font=('Arial', 18, 'normal'))
-#
-#    nivel += 1
+datas = (julho94PrecoFinal, julho04PrecoFinal, julho14PrecoFinal)
+datasNome = ("Julho de 94", "Julho de 04", "Julho de 14")
+
+penup()
+goto( -comprimentoGrafico/2, -alturaGrafico/2)
+larguraDoRetangulo = 75
+espaco = 50
+coordX = -comprimentoGrafico/2 + espaco
+
+for x in range(0, len(datas) ):
+    penup()
+    goto( coordX                     , -alturaGrafico/2)
+    fillcolor( cores[x] )
+    begin_fill()
+    #comeca a desenha o retangulo do preco da cesta
+    pendown()
+    goto( coordX                     , -alturaGrafico/2 + datas[x]*fatorAmpliacao)
+    goto( coordX + larguraDoRetangulo, -alturaGrafico/2 + datas[x]*fatorAmpliacao)
+    goto( coordX + larguraDoRetangulo, -alturaGrafico/2 )
+    goto( coordX                     , -alturaGrafico/2)
+
+    end_fill()
+    
+    #escreve a data dakela cesta
+    penup()
+    goto( coordX + larguraDoRetangulo, -alturaGrafico/2 - 20)
+    write(datasNome[x] , move=False, align="right", font=('Arial', 14, 'normal'))
+    goto( coordX                     , -alturaGrafico/2)
+
+    coordX += larguraDoRetangulo + espaco
 
 done()
 

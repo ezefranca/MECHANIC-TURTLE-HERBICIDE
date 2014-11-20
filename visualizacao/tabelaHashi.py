@@ -13,6 +13,82 @@ def modTupByIndex(tup, index, ins):
     return tuple(tup[0:index]) + (ins,) + tuple(tup[index+1:])
 
 
+#metodo/funcao pra segunda visualizacao
+def valorTotalDaCesta(valoresNumaData)
+    qteNaCestaBasica = (3.0, 3.0, 7.5, 6.0, 1.2, 6.0, 1.5, 4.5, 7.5, 3.75, 1.2, 6.0, 9.0)
+    for x in range(0, qte):
+        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
+
+    dataTotal = 0
+    for x in range(0, qte):
+        dataTotal += valoresNumaData[x]
+    return dataTotal
+
+def converteValoresDoBancoEmPixelsPraDesenhar (valoresNumaData): #nome auto-explicativo
+    qteNaCestaBasica = (3.0,  #kg
+                        3.0,  #kg
+                        7.5,  #duzia   (duzias(12) tabelado do banco mas precisa de 90 unidades pra cesta)
+                        6.0,  #kg
+                        1.2,  #500 gramas (500g tabelado do banco, mas precisa de 600g pra cesta)
+                        6.0,  #kg
+                        1.5,  #kg
+                        4.5,  #kg
+                        7.5,  #litro
+                        3.75, #litro
+                        1.2,  #200 gramas (200g tabelado do banco, mas precisa de 750g pra cesta)
+                        6.0,  #kg
+                        9.0)  #kg
+
+#    julho94valores = (0.80*3.0,
+#                      0.67*3.0,
+#                      0.93*7.5,
+#                      0.69*6.0,
+#                      3.51*1.2,
+#                      2.86*6.0,
+#                      0.53*1.5,
+#                      1.12*4.5,
+#                      0.63*7.5,
+#                      1.08*3.75,
+#                      0.96*1.2,
+#                      1.20*6.0,
+#                      0.54*9.0)
+
+    for x in range(0, qte):
+        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
+
+    #valor total da cesta para determinar a % de cada item
+    dataTotal = 0
+    for x in range(0, qte):
+        dataTotal += valoresNumaData[x]
+
+
+    # porcentagens dos precos de cada produto em uma data vindos do BD
+    dataPorcentagens= (0,)
+    for x in range(0, qte):
+        tuplaTemporaria = (valoresNumaData[x]*100/dataTotal,)
+        dataPorcentagens = dataPorcentagens+ tuplaTemporaria
+
+
+    #porcentagens aditivas dos precos em cada lugar da tupla (tipo fibonacci sqn)
+    #o primeiro valor precisa ser 0%
+    #exemplo: (0%, 10%, 15%, 35%, 65%, 90%, 100%)
+    porcents = 0
+    for x in range(1, qte + 1):
+        porcents += dataPorcentagens[x]
+        dataPorcentagens = modTupByIndex(dataPorcentagens, x, porcents)
+
+
+    #aki converte as %s em em valor de pixel para desenhar
+    dataAlturas = (0,)
+    for x in range(1, qte + 1):
+        alturaTemp = ( (alturaTabela*dataPorcentagens[x])/100.0 , )
+        dataAlturas = dataAlturas+ alturaTemp
+
+    # dataAlturas eh o que precisamos agora para desenhar com a turtle
+    return dataAlturas
+
+
+
 cor0  = (251/255.0,  16/255.0,  34/255.0)
 cor1  = (252/255.0,  24/255.0, 128/255.0)
 cor2  = (237/255.0,  40/255.0, 251/255.0)
@@ -58,7 +134,7 @@ pendown()
 
 # cria a copia das turtles que iram desenhar a tabela
 turtles = [];
-qte = 13
+qte = 13 #qte de itens na cesta
 
 for x in range(0, qte):
     alberto = clone()
@@ -67,9 +143,14 @@ for x in range(0, qte):
     turtles.append( alberto )
 
 
+#prepara os valores para desenhar a tabela
+#------------------------ corassaum dos dados de desenho ------------------------------#
+#--------------------------------------------------------------------------------------#
 
+#----------------------------------------------#
+#coisa com o BD aki e pega os valores no banco #
 ''' valores do banco
-                     julho/1994     julho/2004   julho/2014
+                       julho/1994     julho/2004   julho/2014
     "Açúcar"            0,80           0,95         1,85   kg
     "Arroz"             0,67           2,01         2,48   kg
     "Banana Prata"      0,93           2,18         4,89   dz
@@ -84,151 +165,21 @@ for x in range(0, qte):
     "Pão Francês"       1,20           4,00         9,05   kg
     "Tomate de mesa"    0,54           2,32         4,24   kg
     '''
+#----------------------------------------------#
 
-''' qte para cesta
-    Açúcar       kg  3,0
-    Arroz        kg  3,0
-    Banana     unid. 90
-    Batata       kg  6,0
-    Café em Pó   kg  0,600
-    Carne        kg  6,0
-    Farinha      kg  1,5
-    Feijão       kg  4,5
-    Leite         l  7,5
-    Manteiga    kg  0,750
-    Óleo         ml  750
-    Pão Francês   kg 6,0
-    Tomate        kg 9,0
-    '''
+#valor de por "unidade" de cada item no banco, nas mesma ordem do produtosCesta
+julho94valores = (0.80, 0.67, 0.93, 0.69, 3.51, 2.86, 0.53, 1.12, 0.63, 1.08, 0.96, 1.20, 0.54)
+julho04valores = (0.95, 2.01, 2.18, 1.44, 4.19, 6.97, 1.64, 2.43, 1.66, 2.80, 2.39, 4.00, 2.32)
+julho14valores = (1.85, 2.48, 4.89, 2.99, 6.63,18.05, 2.80, 3.71, 2.85, 3.47, 4.75, 9.05, 4.24)
 
-
-
-#prepara os valores para desenhar a tabela
-alturaItensRegular = alturaTabela/qte
-
-#---- corassaum dos dados de desenho ----#
-#----------------------------------------#
-
-#valor de por "unidade" de cada item no banco multiplicado com a qte de itens da cesta
-julho94valores = (0.80*3.0,
-                  0.67*3.0,
-                  0.93*7.5,
-                  0.69*6.0,
-                  3.51*1.2,
-                  2.86*6.0,
-                  0.53*1.5,
-                  1.12*4.5,
-                  0.63*7.5,
-                  1.08*3.75,
-                  0.96*1.2,
-                  1.20*6.0,
-                  0.54*9.0)
-
-#valor total da cesta para determinar a % de cada item
-julho94total = 0
-for x in range(0, qte):
-    julho94total += julho94valores[x]
-
-
-# porcentagens dos precos de cada produto em uma data vindos do BD
-julho94porcentagens= (0,)
-for x in range(0, qte):
-    tuplaTemporaria = (julho94valores[x]*100/julho94total,)
-    julho94porcentagens= julho94porcentagens+ tuplaTemporaria
-
-
-#porcentagens aditivas dos precos em cada lugar da tupla (tipo fibonacci sqn)
-#o primeiro valor precisa ser 0%
-#exemplo: (0%, 10%, 15%, 35%, 65%, 90%, 100%)
-porcents = 0
-for x in range(1, qte + 1):
-    porcents += julho94porcentagens[x]
-    julho94porcentagens = modTupByIndex(julho94porcentagens, x, porcents)
-
-
-#aki converte as %s em em valor de pixel para desenhar
-julho94alturas = (0,)
-for x in range(1, qte + 1):
-    alturaTemp = ( (alturaTabela*julho94porcentagens[x])/100.0 , )
-    julho94alturas = julho94alturas+ alturaTemp
-
-# julho94alturas eh o que precisamos agora para desenhar com a turtle
-# but wait, theres more
-
-
-
-#outra data, mesmo processo, se for dada uma qte de datas (qteColunas), da pra fazer tudo dentro de um "for"
-#ajustando as variaveis pra n dar problema claro
-julho04valores = (0.95 *3.0,
-                  2.01 *3.0,
-                  2.18 *7.5,
-                  1.44 *6.0,
-                  4.19 *1.2,
-                  6.97 *6.0,
-                  1.64 *1.5,
-                  2.43 *4.5,
-                  1.66 *7.5,
-                  2.80 *3.75,
-                  2.39 *1.2,
-                  4.00 *6.0,
-                  2.32 *9.0)
-
-julho04total = 0
-for x in range(0, qte):
-    julho04total += julho04valores[x]
-
-julho04porcentagens= (0,)
-for x in range(0, qte):
-    tuplaTemporaria = (julho04valores[x]*100/julho04total,)
-    julho04porcentagens= julho04porcentagens+ tuplaTemporaria
-
-porcents = 0
-for x in range(1, qte + 1):
-    porcents += julho04porcentagens[x]
-    julho04porcentagens = modTupByIndex(julho04porcentagens, x, porcents)
-
-julho04alturas = (0,)
-for x in range(1, qte + 1):
-    alturaTemp = ( (alturaTabela*julho04porcentagens[x])/100.0 , )
-    julho04alturas = julho04alturas + alturaTemp
-
-
-##ultima data dessa visalizacao
-julho14valores = (1.85 *3.0,
-                  2.48 *3.0,
-                  4.89 *7.5,
-                  2.99 *6.0,
-                  6.63 *1.2,
-                 18.05 *6.0,
-                  2.80 *1.5,
-                  3.71 *4.5,
-                  2.85 *7.5,
-                  3.47 *3.75,
-                  4.75 *1.2,
-                  9.05 *6.0,
-                  4.24 *9.0)
-
-julho14total = 0
-for x in range(0, qte):
-    julho14total += julho14valores[x]
-
-julho14porcentagens= (0,)
-for x in range(0, qte):
-    tuplaTemporaria = (julho14valores[x]*100/julho14total,)
-    julho14porcentagens= julho14porcentagens+ tuplaTemporaria
-
-porcents = 0
-for x in range(1, qte + 1):
-    porcents += julho14porcentagens[x]
-    julho14porcentagens = modTupByIndex(julho14porcentagens, x, porcents)
-
-julho14alturas = (0,)
-for x in range(1, qte + 1):
-    alturaTemp = ( (alturaTabela*julho14porcentagens[x])/100.0 , )
-    julho14alturas = julho14alturas + alturaTemp
+julho94alturas = converteValoresDoBancoEmPixelsPraDesenhar(julho94valores)
+julho04alturas = converteValoresDoBancoEmPixelsPraDesenhar(julho04valores)
+julho14alturas = converteValoresDoBancoEmPixelsPraDesenhar(julho14valores)
 
 
 ##antigo de teste
+#alturaItensRegular = alturaTabela/qte
+#
 #tuplaitens = (0,1,2,3,4,5,6,7,8,9,10,12,13) # porcentagens dos precos de cada produto em uma data vindos do BD
 #
 ##itens1
@@ -253,7 +204,7 @@ for x in range(1, qte + 1):
 #    datas = datas + tupladatas
 
 datas = (julho94alturas, julho04alturas, julho14alturas)
-#----------------------------------------#
+#--------------------------------------------------------------------------------------#
 
 
 #comeca a desenhar e pintar a tabela em cascata

@@ -15,7 +15,19 @@ def modTupByIndex(tup, index, ins):
 
 #metodo/funcao pra segunda visualizacao
 def valorTotalDaCesta(valoresNumaData):
-    qteNaCestaBasica = (3.0, 3.0, 7.5, 6.0, 1.2, 6.0, 1.5, 4.5, 7.5, 3.75, 1.2, 6.0, 9.0)
+    qteNaCestaBasica = (3.0,  #kg
+                        3.0,  #kg
+                        7.5,  #duzia      (duzias(12) tabelado do banco mas precisa de 90 unidades pra cesta)
+                        6.0,  #kg
+                        1.2,  #500 gramas (500g tabelado do banco, mas precisa de 600g pra cesta)
+                        6.0,  #kg
+                        1.5,  #kg
+                        4.5,  #kg
+                        7.5,  #litro
+                        3.75, #200 gramas (200g tabelado do banco, mas precisa de 750g pra cesta)
+                        750.0/900.0, #750ml      (900ml tabelado do banco, mas precisa de 750ml pra cesta (sobra oleo))
+                        6.0,  #kg
+                        9.0)  #kg
     for x in range(0, qte):
         valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
 
@@ -97,6 +109,13 @@ while guiaReais*fatorAmpliacao < alturaGrafico:
     pendown()
     goto(comprimentoGrafico/2, -alturaGrafico/2 + novaGuia)
     guiaReais += 50
+
+
+
+#----------------------------------------------#
+#coisa com o BD aki e pega os valores no banco #
+
+#----------------------------------------------#
 
 
 produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomate de mesa")

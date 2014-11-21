@@ -4,8 +4,11 @@
 #import psycopg2
 import math
 
-from random import randint
+import random
 from threading import Thread
+
+import simplejson
+import urllib
 
 from turtle import *
 
@@ -15,9 +18,9 @@ def modTupByIndex(tup, index, ins):
 
 #metodo/funcao pra segunda visualizacao
 def valorTotalDaCesta(valoresNumaData):
-    qteNaCestaBasica = (3.0, 3.0, 7.5, 6.0, 1.2, 6.0, 1.5, 4.5, 7.5, 3.75, 1.2, 6.0, 9.0)
-    for x in range(0, qte):
-        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
+#    qteNaCestaBasica = (3.0, 3.0, 7.5, 6.0, 1.2, 6.0, 1.5, 4.5, 7.5, 3.75, 1.2, 6.0, 9.0)
+#    for x in range(0, qte):
+#        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
 
     dataTotal = 0
     for x in range(0, qte):
@@ -25,36 +28,25 @@ def valorTotalDaCesta(valoresNumaData):
     return dataTotal
 
 def converteValoresDoBancoEmPixelsPraDesenhar (valoresNumaData): #nome auto-explicativo
-    qteNaCestaBasica = (3.0,  #kg
-                        3.0,  #kg
-                        7.5,  #duzia   (duzias(12) tabelado do banco mas precisa de 90 unidades pra cesta)
-                        6.0,  #kg
-                        1.2,  #500 gramas (500g tabelado do banco, mas precisa de 600g pra cesta)
-                        6.0,  #kg
-                        1.5,  #kg
-                        4.5,  #kg
-                        7.5,  #litro
-                        3.75, #litro
-                        1.2,  #200 gramas (200g tabelado do banco, mas precisa de 750g pra cesta)
-                        6.0,  #kg
-                        9.0)  #kg
+#    qteNaCestaBasica = (3.0,  #kg
+#                        3.0,  #kg
+#                        7.5,  #duzia      (duzias(12) tabelado do banco mas precisa de 90 unidades pra cesta)
+#                        6.0,  #kg
+#                        1.2,  #500 gramas (500g tabelado do banco, mas precisa de 600g pra cesta)
+#                        6.0,  #kg
+#                        1.5,  #kg
+#                        4.5,  #kg
+#                        7.5,  #litro
+#                        3.75, #200 gramas (200g tabelado do banco, mas precisa de 750g pra cesta)
+#                 750.0/900.0, #750ml      (900ml tabelado do banco, mas precisa de 750ml pra cesta (sobra oleo))
+#                        6.0,  #kg
+#                        9.0)  #kg
+#
+#    for x in range(0, qte):
+#        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
 
-#    julho94valores = (0.80*3.0,
-#                      0.67*3.0,
-#                      0.93*7.5,
-#                      0.69*6.0,
-#                      3.51*1.2,
-#                      2.86*6.0,
-#                      0.53*1.5,
-#                      1.12*4.5,
-#                      0.63*7.5,
-#                      1.08*3.75,
-#                      0.96*1.2,
-#                      1.20*6.0,
-#                      0.54*9.0)
-
-    for x in range(0, qte):
-        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
+   #esta parte ja vem pronta do json direto no valoresNumaData
+   
 
     #valor total da cesta para determinar a % de cada item
     dataTotal = 0
@@ -103,19 +95,27 @@ cor11 = ( 14/255.0,  38/255.0, 251/255.0)
 cor12 = ( 12/255.0,  91/255.0, 183/255.0)
 cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor11, cor12)
 
-#produtosCesta = ("Carne", "Leite", "Feijão", "Arroz", "Farinha", "Batata", "Tomate", "Pão Francês", "Café em Pó", "Banana", "Açúcar", "Óleo", "Manteiga")
-produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomatede mesa")
+
+#mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
+#mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
+#mesAno3 = (random.randrange(1, 10, 1), 1900 +random.randrange( 108, 114, 1) )
+#
+#datasPesquisa = (mesAno1, mesAno2, mesAno3)
+
+#para datas custom
+datasPesquisa = (( 7, 1994 ) ,  ( 7, 2004 ) , ( 7, 2014 ))
 
 
 #configuragoes da tabela
-alturaTabela = 700      #valor da altura em pixels               #<-valor temporario
-comprimentoTabela = 800 #valor do comprimento em pixels          #<-valor temporario
-qteColunas = 3          # qte de colunas, ou datas para mostrar  #<-valor temporario
+alturaTabela = 700              #valor da altura em pixels               #<-valor mutavel
+comprimentoTabela = 800         #valor do comprimento em pixels          #<-valor mutavel
+qteColunas = len(datasPesquisa) # qte de colunas, ou datas para mostrar
 
-divs = qteColunas - 1   # qte de "hastes" divisorias
-space =  30             # qte de pixels para transicao de nivel
+divs = qteColunas - 1           # qte de "hastes" divisorias
+space =  30                     # qte de pixels para transicao de nivel  #<-valor mutavel
 cBase = (comprimentoTabela - (divs * space))/qteColunas  #comprimento da "base"
 
+qte = 13 #qte de itens na cesta
 
 #configura e posicia a turtle original para ser copiada
 color('black')
@@ -133,7 +133,7 @@ pendown()
 
 # cria a copia das turtles que iram desenhar a tabela
 turtles = [];
-qte = 13 #qte de itens na cesta
+
 
 for x in range(0, qte):
     alberto = clone()
@@ -142,12 +142,49 @@ for x in range(0, qte):
     turtles.append( alberto )
 
 
+
+produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomatede mesa")
+
 #prepara os valores para desenhar a tabela
 #------------------------ corassaum dos dados de desenho ------------------------------#
 #--------------------------------------------------------------------------------------#
 
 #----------------------------------------------#
 #coisa com o BD aki e pega os valores no banco #
+mes = 7
+ano = 1994
+
+if mes < 10:
+    url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' + '0'+ str(mes) + '&ano=' + str(ano)
+else:
+    url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' +      str(mes) + '&ano=' + str(ano)
+
+
+json = simplejson.load(urllib.urlopen(url))
+
+acucar = json['Acucar']
+arroz = json['Arroz']
+banana = json['Banana_Prata']
+batata = json['Batata']
+cafe = json['Cafe']
+carne = json['Carne']
+farinha = json['Farinha_de_Trigo']
+feijao = json['Feijao']
+leite = json['leite']
+manteiga = json['Manteiga']
+oleo =     json['Oleo_de_Soja']
+pao = json['Pao']
+tomate = json['Tomate']
+
+
+cesta_basica = [acucar, arroz, banana, batata ,cafe, carne, farinha, feijao, leite,  manteiga, oleo, pao, tomate ]
+
+#conversao do json pra tuplas e encaixar no codigo
+julho94valores = ()
+for x in range(0, qte):
+    tuplaTemporaria = ( cesta_basica[x]['valor'], )
+    julho94valores = julho94valores + tuplaTemporaria
+
 ''' valores do banco
                        julho/1994     julho/2004   julho/2014
     "Açúcar"            0,80           0,95         1,85   kg
@@ -167,7 +204,7 @@ for x in range(0, qte):
 #----------------------------------------------#
 
 #valor de por "unidade" de cada item no banco, nas mesma ordem do produtosCesta
-julho94valores = (0.80, 0.67, 0.93, 0.69, 3.51, 2.86, 0.53, 1.12, 0.63, 1.08, 0.96, 1.20, 0.54)
+#julho94valores = (0.80, 0.67, 0.93, 0.69, 3.51, 2.86, 0.53, 1.12, 0.63, 1.08, 0.96, 1.20, 0.54)
 julho04valores = (0.95, 2.01, 2.18, 1.44, 4.19, 6.97, 1.64, 2.43, 1.66, 2.80, 2.39, 4.00, 2.32)
 julho14valores = (1.85, 2.48, 4.89, 2.99, 6.63,18.05, 2.80, 3.71, 2.85, 3.47, 4.75, 9.05, 4.24)
 
@@ -233,5 +270,8 @@ for viera in turtles:
 
 
 done()
+
+
+
 
 

@@ -79,6 +79,33 @@ def converteValoresDoBancoEmPixelsPraDesenhar (valoresNumaData): #nome auto-expl
     # dataAlturas eh o que precisamos agora para desenhar com a turtle
     return dataAlturas
 
+def stringDoMes(numero): #nao sei fazer switch no python, cabo a luz e nao tem internet pra pesquisar
+    if (numero == 1 ):
+        return "Janeiro"
+    if (numero == 2 ):
+        return "Fevereiro"
+    if (numero == 3 ):
+        return "Marco"
+    if (numero == 4 ):
+        return "Abril"
+    if (numero == 5 ):
+        return "Maio"
+    if (numero == 6 ):
+        return "Junho"
+    if (numero == 7 ):
+        return "Julho"
+    if (numero == 8 ):
+        return "Agosto"
+    if (numero == 9 ):
+        return "Setembro"
+    if (numero == 10 ):
+        return "Outubro"
+    if (numero == 11 ):
+        return "Novembro"
+    if (numero == 12 ):
+        return "Dezembro"
+    else:
+        return "mes invalido"
 
 cor0  = (251/255.0,  16/255.0,  34/255.0)
 cor1  = (252/255.0,  24/255.0, 128/255.0)
@@ -102,6 +129,7 @@ cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor1
 #
 #datasPesquisa = (mesAno1, mesAno2, mesAno3)
 
+
 #para datas custom
 datasPesquisa = (( 7, 1994 ) ,  ( 7, 2004 ) , ( 7, 2014 ))
 
@@ -120,9 +148,9 @@ qte = 13 #qte de itens na cesta
 #configura e posicia a turtle original para ser copiada
 color('black')
 pensize(1)
-#ht()
-showturtle()
-st()
+ht()
+#showturtle()
+#st()
 speed(0)
 tracer(1, 1)
 
@@ -134,99 +162,69 @@ pendown()
 # cria a copia das turtles que iram desenhar a tabela
 turtles = [];
 
-
 for x in range(0, qte):
     alberto = clone()
     alberto.color( "white")
     alberto.fillcolor( cores[x] )
     turtles.append( alberto )
 
-
-
 produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomatede mesa")
 
 #prepara os valores para desenhar a tabela
+
 #------------------------ corassaum dos dados de desenho ------------------------------#
 #--------------------------------------------------------------------------------------#
-
-#----------------------------------------------#
 #coisa com o BD aki e pega os valores no banco #
-mes = 7
-ano = 1994
+datas = ()
+for x in range(0, qteColunas):
+    url = ''
+    
+    if datasPesquisa[x][0] < 10:
+        url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' + '0'+ str(datasPesquisa[x][0]) + '&ano=' + str(datasPesquisa[x][1])
+    else:
+        url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' +      str(datasPesquisa[x][0]) + '&ano=' + str(datasPesquisa[x][1])
 
-if mes < 10:
-    url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' + '0'+ str(mes) + '&ano=' + str(ano)
-else:
-    url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' +      str(mes) + '&ano=' + str(ano)
+    json = simplejson.load(urllib.urlopen(url))
 
+    acucar   = json['Acucar']
+    arroz    = json['Arroz']
+    banana   = json['Banana_Prata']
+    batata   = json['Batata']
+    cafe     = json['Cafe']
+    carne    = json['Carne']
+    farinha  = json['Farinha_de_Trigo']
+    feijao   = json['Feijao']
+    leite    = json['leite']
+    manteiga = json['Manteiga']
+    oleo     = json['Oleo_de_Soja']
+    pao      = json['Pao']
+    tomate   = json['Tomate']
 
-json = simplejson.load(urllib.urlopen(url))
+    cesta_basica = [acucar, arroz, banana, batata ,cafe, carne, farinha, feijao, leite,  manteiga, oleo, pao, tomate ]
 
-acucar = json['Acucar']
-arroz = json['Arroz']
-banana = json['Banana_Prata']
-batata = json['Batata']
-cafe = json['Cafe']
-carne = json['Carne']
-farinha = json['Farinha_de_Trigo']
-feijao = json['Feijao']
-leite = json['leite']
-manteiga = json['Manteiga']
-oleo =     json['Oleo_de_Soja']
-pao = json['Pao']
-tomate = json['Tomate']
+    #conversao do json pra tuplas e encaixar no codigo
+    dataValores = ()
+    for x in range(0, qte):
+        tuplaTemporaria = ( cesta_basica[x]['valor'], )
+        dataValores = dataValores + tuplaTemporaria
 
+    dataValores = converteValoresDoBancoEmPixelsPraDesenhar(dataValores)
 
-cesta_basica = [acucar, arroz, banana, batata ,cafe, carne, farinha, feijao, leite,  manteiga, oleo, pao, tomate ]
+    #monstrinho pra percorrer e desenha a tabela
+    datas = datas + (dataValores, )
 
-#conversao do json pra tuplas e encaixar no codigo
-julho94valores = ()
-for x in range(0, qte):
-    tuplaTemporaria = ( cesta_basica[x]['valor'], )
-    julho94valores = julho94valores + tuplaTemporaria
-
-''' valores do banco
-                       julho/1994     julho/2004   julho/2014
-    "Açúcar"            0,80           0,95         1,85   kg
-    "Arroz"             0,67           2,01         2,48   kg
-    "Banana Prata"      0,93           2,18         4,89   dz
-    "Batata"            0,69           1,44         2,99   kg
-    "Café em Pó"        3,51           4,19         6,93   500g
-    "Carne Bovina"      2,86           6,97        18,05   kg
-    "Farinha de trigo"  0,53           1,64         2,80   kg
-    "Feijão"            1,12           2,43         3,71   litro
-    "Leite tipo B"      0,63           1,66         2,85   litro
-    "Manteiga"          1,08           2,80         3,47   200g
-    "Óleo de Soja"      0,96           2,39         4,75   900ml
-    "Pão Francês"       1,20           4,00         9,05   kg
-    "Tomate de mesa"    0,54           2,32         4,24   kg
-    '''
-#----------------------------------------------#
-
-#valor de por "unidade" de cada item no banco, nas mesma ordem do produtosCesta
-#julho94valores = (0.80, 0.67, 0.93, 0.69, 3.51, 2.86, 0.53, 1.12, 0.63, 1.08, 0.96, 1.20, 0.54)
-julho04valores = (0.95, 2.01, 2.18, 1.44, 4.19, 6.97, 1.64, 2.43, 1.66, 2.80, 2.39, 4.00, 2.32)
-julho14valores = (1.85, 2.48, 4.89, 2.99, 6.63,18.05, 2.80, 3.71, 2.85, 3.47, 4.75, 9.05, 4.24)
-
-julho94alturas = converteValoresDoBancoEmPixelsPraDesenhar(julho94valores)
-julho04alturas = converteValoresDoBancoEmPixelsPraDesenhar(julho04valores)
-julho14alturas = converteValoresDoBancoEmPixelsPraDesenhar(julho14valores)
-
-
-datas = (julho94alturas, julho04alturas, julho14alturas)
 #--------------------------------------------------------------------------------------#
 
-
+#escreve encima da tabela o nome das datas dentralizado com a coluna
 penup()
 color("black")
 alturaEscrita = alturaTabela/2 + 10
-goto( -comprimentoTabela/4 , alturaEscrita)
-write( "Julho de 1994", move=False, align="right", font=('Arial', 18, 'normal'))
-goto( -comprimentoTabela/4 +(space +cBase), alturaEscrita)
-write( "Julho de 2004", move=False, align="right", font=('Arial', 18, 'normal'))
-goto( -comprimentoTabela/4 +2*(space +cBase), alturaEscrita )
-write( "Julho de 2014", move=False, align="right", font=('Arial', 18, 'normal'))
-
+posEscrita = -comprimentoTabela/2 + cBase/2
+for x in range(0, qteColunas):
+    goto( posEscrita , alturaEscrita)
+    texto = stringDoMes(datasPesquisa[x][0]) + " de " + str(datasPesquisa[x][1])
+    write( texto , move=False, align="center", font=('Arial', 18, 'normal'))
+    posEscrita += space + cBase
 
 #comeca a desenhar e pintar a tabela em cascata
 # ate este commit nao há mais bugs aki
@@ -270,8 +268,6 @@ for viera in turtles:
 
 
 done()
-
-
 
 
 

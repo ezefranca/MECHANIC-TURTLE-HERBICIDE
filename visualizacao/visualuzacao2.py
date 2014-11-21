@@ -1,41 +1,51 @@
 #!/usr/bin/env python
 # coding=utf8
 
-#import psycopg2
-import math
+import simplejson
+import urllib
 
+import math
 from random import randint
-from threading import Thread
 
 from turtle import *
 
 def modTupByIndex(tup, index, ins):
     return tuple(tup[0:index]) + (ins,) + tuple(tup[index+1:])
 
-
 #metodo/funcao pra segunda visualizacao
 def valorTotalDaCesta(valoresNumaData):
-    qteNaCestaBasica = (3.0,  #kg
-                        3.0,  #kg
-                        7.5,  #duzia      (duzias(12) tabelado do banco mas precisa de 90 unidades pra cesta)
-                        6.0,  #kg
-                        1.2,  #500 gramas (500g tabelado do banco, mas precisa de 600g pra cesta)
-                        6.0,  #kg
-                        1.5,  #kg
-                        4.5,  #kg
-                        7.5,  #litro
-                        3.75, #200 gramas (200g tabelado do banco, mas precisa de 750g pra cesta)
-                        750.0/900.0, #750ml      (900ml tabelado do banco, mas precisa de 750ml pra cesta (sobra oleo))
-                        6.0,  #kg
-                        9.0)  #kg
-    for x in range(0, qte):
-        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
-
     dataTotal = 0
     for x in range(0, qte):
         dataTotal += valoresNumaData[x]
     return dataTotal
 
+def stringDoMes(numero): #nao sei fazer switch no python, cabo a luz e nao tem internet pra pesquisar
+    if (numero == 1 ):
+        return "Janeiro"
+    if (numero == 2 ):
+        return "Fevereiro"
+    if (numero == 3 ):
+        return "Marco"
+    if (numero == 4 ):
+        return "Abril"
+    if (numero == 5 ):
+        return "Maio"
+    if (numero == 6 ):
+        return "Junho"
+    if (numero == 7 ):
+        return "Julho"
+    if (numero == 8 ):
+        return "Agosto"
+    if (numero == 9 ):
+        return "Setembro"
+    if (numero == 10 ):
+        return "Outubro"
+    if (numero == 11 ):
+        return "Novembro"
+    if (numero == 12 ):
+        return "Dezembro"
+    else:
+        return "mes invalido"
 
 cor0  = (251/255.0,  16/255.0,  34/255.0)
 cor1  = (252/255.0,  24/255.0, 128/255.0)
@@ -53,11 +63,22 @@ cor12 = ( 12/255.0,  91/255.0, 183/255.0)
 cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor11, cor12)
 
 
+#mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
+#mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
+#mesAno3 = (random.randrange(1, 10, 1), 1900 +random.randrange( 108, 114, 1) )
+#
+#datasPesquisa = (mesAno1, mesAno2, mesAno3)
+
+
+#para datas custom
+datasPesquisa = (( 7, 1994 ) ,  ( 7, 2004 ) , ( 7, 2014 ))
+
 
 #configuragoes da tabela
 alturaGrafico= 600      #valor da altura em pixels               #<-valor temporario
 comprimentoGrafico = 700 #valor do comprimento em pixels          #<-valor temporario
 qte = 13 #qte de itens na cesta
+qteColunas = len(datasPesquisa)
 
 fatorAmpliacao = 1.5
 
@@ -110,35 +131,61 @@ while guiaReais*fatorAmpliacao < alturaGrafico:
     goto(comprimentoGrafico/2, -alturaGrafico/2 + novaGuia)
     guiaReais += 50
 
-
-
-#----------------------------------------------#
+#------------------------ corassaum dos dados de desenho ------------------------------#
+#--------------------------------------------------------------------------------------#
 #coisa com o BD aki e pega os valores no banco #
+datas = ()
+for x in range(0, qteColunas):
+    url = ''
+    
+    if datasPesquisa[x][0] < 10:
+        url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' + '0'+ str(datasPesquisa[x][0]) + '&ano=' + str(datasPesquisa[x][1])
+    else:
+        url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' +      str(datasPesquisa[x][0]) + '&ano=' + str(datasPesquisa[x][1])
 
-#----------------------------------------------#
+    json = simplejson.load(urllib.urlopen(url))
 
+    acucar   = json['Acucar']
+    arroz    = json['Arroz']
+    banana   = json['Banana_Prata']
+    batata   = json['Batata']
+    cafe     = json['Cafe']
+    carne    = json['Carne']
+    farinha  = json['Farinha_de_Trigo']
+    feijao   = json['Feijao']
+    leite    = json['leite']
+    manteiga = json['Manteiga']
+    oleo     = json['Oleo_de_Soja']
+    pao      = json['Pao']
+    tomate   = json['Tomate']
+    
+    cesta_basica = [acucar, arroz, banana, batata ,cafe, carne, farinha, feijao, leite,  manteiga, oleo, pao, tomate ]
+    
+    #conversao do json pra tuplas e encaixar no codigo
+    dataValores = ()
+    for x in range(0, qte):
+        tuplaTemporaria = ( cesta_basica[x]['valor'], )
+        dataValores = dataValores + tuplaTemporaria
 
-produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomate de mesa")
-#valor de por "unidade" de cada item no banco, nas mesma ordem do produtosCesta
-julho94valores = (0.80, 0.67, 0.93, 0.69, 3.51, 2.86, 0.53, 1.12, 0.63, 1.08, 0.96, 1.20, 0.54)
-julho04valores = (0.95, 2.01, 2.18, 1.44, 4.19, 6.97, 1.64, 2.43, 1.66, 2.80, 2.39, 4.00, 2.32)
-julho14valores = (1.85, 2.48, 4.89, 2.99, 6.63,18.05, 2.80, 3.71, 2.85, 3.47, 4.75, 9.05, 4.24)
+    dataValores = (valorTotalDaCesta(dataValores) ,)
 
-julho94PrecoFinal = valorTotalDaCesta(julho94valores)
-julho04PrecoFinal = valorTotalDaCesta(julho04valores)
-julho14PrecoFinal = valorTotalDaCesta(julho14valores)
+    #monstrinho pra percorrer e desenha o grafico
+    datas = datas + dataValores
+#--------------------------------------------------------------------------------------#
 
-
-datas = (julho94PrecoFinal, julho04PrecoFinal, julho14PrecoFinal)
-datasNome = ("Julho de 94", "Julho de 04", "Julho de 14")
-
+#prepara os valores para desenhar o grafico
 penup()
 goto( -comprimentoGrafico/2, -alturaGrafico/2)
 larguraDoRetangulo = 75
 espaco = 50
 coordX = -comprimentoGrafico/2 + espaco
 
-for x in range(0, len(datas) ):
+alturaEscrita = -alturaGrafico/2 - 20
+posEscrita = -comprimentoGrafico/2 + espaco +larguraDoRetangulo/2
+
+color("black")
+
+for x in range(0, len(datasPesquisa)):
     penup()
     goto( coordX                     , -alturaGrafico/2)
     fillcolor( cores[x] )
@@ -149,16 +196,17 @@ for x in range(0, len(datas) ):
     goto( coordX + larguraDoRetangulo, -alturaGrafico/2 + datas[x]*fatorAmpliacao)
     goto( coordX + larguraDoRetangulo, -alturaGrafico/2 )
     goto( coordX                     , -alturaGrafico/2)
-
     end_fill()
-    
-    #escreve a data dakela cesta
-    penup()
-    goto( coordX + larguraDoRetangulo, -alturaGrafico/2 - 20)
-    write(datasNome[x] , move=False, align="right", font=('Arial', 14, 'normal'))
-    goto( coordX                     , -alturaGrafico/2)
 
     coordX += larguraDoRetangulo + espaco
+    
+    
+    #escreve encima da tabela o nome das datas dentralizado com a coluna
+    penup()
+    goto( posEscrita , alturaEscrita)
+    texto = stringDoMes(datasPesquisa[x][0]) + " de " + str(datasPesquisa[x][1])
+    write( texto , move=False, align="center", font=('Arial', 14, 'normal'))
+    posEscrita += espaco + larguraDoRetangulo
 
 done()
 

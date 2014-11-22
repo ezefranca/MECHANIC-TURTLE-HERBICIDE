@@ -1,57 +1,28 @@
 #!/usr/bin/env python
 # coding=utf8
 
-#import psycopg2
-import math
-
-import random
-from threading import Thread
-
 import simplejson
 import urllib
+
+import math
+import random
 
 from turtle import *
 
 def modTupByIndex(tup, index, ins):
     return tuple(tup[0:index]) + (ins,) + tuple(tup[index+1:])
 
-
-#metodo/funcao pra segunda visualizacao
+#metodo/funcao pra segunda visualizacao tambem
 def valorTotalDaCesta(valoresNumaData):
-#    qteNaCestaBasica = (3.0, 3.0, 7.5, 6.0, 1.2, 6.0, 1.5, 4.5, 7.5, 3.75, 1.2, 6.0, 9.0)
-#    for x in range(0, qte):
-#        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
-
-    dataTotal = 0
+    total = 0
     for x in range(0, qte):
-        dataTotal += valoresNumaData[x]
-    return dataTotal
+        total += valoresNumaData[x]
+    return total
 
 def converteValoresDoBancoEmPixelsPraDesenhar (valoresNumaData): #nome auto-explicativo
-#    qteNaCestaBasica = (3.0,  #kg
-#                        3.0,  #kg
-#                        7.5,  #duzia      (duzias(12) tabelado do banco mas precisa de 90 unidades pra cesta)
-#                        6.0,  #kg
-#                        1.2,  #500 gramas (500g tabelado do banco, mas precisa de 600g pra cesta)
-#                        6.0,  #kg
-#                        1.5,  #kg
-#                        4.5,  #kg
-#                        7.5,  #litro
-#                        3.75, #200 gramas (200g tabelado do banco, mas precisa de 750g pra cesta)
-#                 750.0/900.0, #750ml      (900ml tabelado do banco, mas precisa de 750ml pra cesta (sobra oleo))
-#                        6.0,  #kg
-#                        9.0)  #kg
-#
-#    for x in range(0, qte):
-#        valoresNumaData = modTupByIndex( valoresNumaData, x, valoresNumaData[x]*qteNaCestaBasica[x] )
-
-   #esta parte ja vem pronta do json direto no valoresNumaData
-   
 
     #valor total da cesta para determinar a % de cada item
-    dataTotal = 0
-    for x in range(0, qte):
-        dataTotal += valoresNumaData[x]
+    dataTotal = valorTotalDaCesta(valoresNumaData)
 
 
     # porcentagens dos precos de cada produto em uma data vindos do BD
@@ -123,15 +94,15 @@ cor12 = ( 12/255.0,  91/255.0, 183/255.0)
 cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor11, cor12)
 
 
-#mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
-#mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
-#mesAno3 = (random.randrange(1, 10, 1), 1900 +random.randrange( 108, 114, 1) )
-#
-#datasPesquisa = (mesAno1, mesAno2, mesAno3)
+mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
+mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
+mesAno3 = (random.randrange(1, 10, 1), 1900 +random.randrange( 108, 114, 1) )
+
+datasPesquisa = (mesAno1, mesAno2, mesAno3)
 
 
 #para datas custom
-datasPesquisa = (( 7, 1994 ) ,  ( 7, 2004 ) , ( 7, 2014 ))
+#datasPesquisa = (( 7, 1994 ) ,  ( 7, 2004 ) , ( 7, 2014 ))
 
 
 #configuragoes da tabela
@@ -146,6 +117,7 @@ cBase = (comprimentoTabela - (divs * space))/qteColunas  #comprimento da "base"
 qte = 13 #qte de itens na cesta
 
 #configura e posicia a turtle original para ser copiada
+screensize(1300,1000)
 color('black')
 pensize(1)
 ht()
@@ -156,7 +128,6 @@ tracer(1, 1)
 
 penup()
 goto(-comprimentoTabela/2, alturaTabela/2)
-#left(90)
 pendown()
 
 # cria a copia das turtles que iram desenhar a tabela
@@ -226,6 +197,10 @@ for x in range(0, qteColunas):
     write( texto , move=False, align="center", font=('Arial', 18, 'normal'))
     posEscrita += space + cBase
 
+
+goto(0, -alturaTabela/2 - 30)
+write( "Porcentagens de cada item da Cesta Basica em relação ao valor total em uma certa Data" , move=False, align="center", font=('Arial', 18, 'normal'))
+
 #comeca a desenhar e pintar a tabela em cascata
 # ate este commit nao há mais bugs aki
 
@@ -262,10 +237,8 @@ for viera in turtles:
     color( cores[nivel] )
     goto(-comprimentoTabela/2 -5, alturaTabela/2 -(datas[0][nivel]+ datas[0][nivel +1])/2 -18 )
     write( produtosCesta[nivel], move=False, align="right", font=('Arial', 18, 'normal'))
-   #write("manoloooo", move=False, align="right", font=('Arial', 18, 'normal'))
 
     nivel += 1
-
 
 done()
 

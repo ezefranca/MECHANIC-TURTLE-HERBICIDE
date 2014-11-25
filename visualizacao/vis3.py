@@ -103,15 +103,16 @@ cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor1
 corQteCestas = cores[ random.randrange(0, 6, 1) ]
 corSalario = cores[ random.randrange(7, 13, 1)]
 
-#mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
-#mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
-#mesAno3 = (random.randrange(1, 10, 1), 1900 +random.randrange( 108, 114, 1) )
-#
-#datasPesquisa = (mesAno1, mesAno2, mesAno3)
+
+mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
+mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
+mesAno3 = (random.randrange(1, 10, 1), 1900 +random.randrange( 108, 114, 1) )
+
+datasPesquisa = (mesAno1, mesAno2, mesAno3)
 
 
-#para datas custom
-datasPesquisa = (( 7, 1994 ) ,  ( 7, 2004 ) , ( 7, 2014 ))
+##para datas custom
+#datasPesquisa = (( 7, 1994 ) ,  ( 7, 2004 ) , ( 7, 2014 ))
 
 
 #configuragoes da tabela

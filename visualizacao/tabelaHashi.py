@@ -139,7 +139,7 @@ for x in range(0, qte):
     alberto.fillcolor( cores[x] )
     turtles.append( alberto )
 
-produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Batata", "Pão Francês", "Tomatede mesa")
+produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Batata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Pão Francês", "Tomate de mesa")
 
 #prepara os valores para desenhar a tabela
 

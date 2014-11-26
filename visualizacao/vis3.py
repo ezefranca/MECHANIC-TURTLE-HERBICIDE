@@ -103,25 +103,31 @@ cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor1
 corQteCestas = cores[ random.randrange(0, 6, 1) ]
 corSalario = cores[ random.randrange(7, 13, 1)]
 
+#mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
+#mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
+#mesAno3 = (random.randrange(1, 10, 1), 1900 +random.randrange( 108, 114, 1) )
+#datasPesquisa = (mesAno1, mesAno2, mesAno3)
 
-mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
-mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
-mesAno3 = (random.randrange(1, 10, 1), 1900 +random.randrange( 108, 114, 1) )
-
-datasPesquisa = (mesAno1, mesAno2, mesAno3)
-
+anoRandom = 1900 + random.randrange(  94, 114, 1)
+datasPesquisa = ()
+for x in range(0,12):
+    #data = (x+1, anoRandom)
+    data = (x+1, anoRandom)
+    tuplaTemporaria = (data, )
+    datasPesquisa = datasPesquisa + tuplaTemporaria
 
 ##para datas custom
 #datasPesquisa = (( 7, 1994 ) ,  ( 7, 2004 ) , ( 7, 2014 ))
 
 
 #configuragoes da tabela
-alturaGrafico= 600       #valor da altura em pixels       #<-valor mutavel
+fatorAmpliacao = 0.75    #<-valor mutavel
+
+alturaGrafico = 600      #valor da altura em pixels       #<-valor mutavel
 comprimentoGrafico = 700 #valor do comprimento em pixels  #<-valor mutavel
 qte = 13 #qte de itens na cesta
-qteColunas = len(datasPesquisa)
+qteDatas = len(datasPesquisa)
 
-fatorAmpliacao = 0.75
 
 #configura e posicia a turtle original
 screensize(1300,1000)
@@ -142,8 +148,8 @@ tutsGraficoTempo.goto( -comprimentoGrafico/2 -100, -alturaGrafico/2)
 tutsGraficoTempo.pendown()
 tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2)
 tutsGraficoTempo.penup()
-tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2 - 20)
-tutsGraficoTempo.write("Tempo" , move=False, align="right", font=('Arial', 14, 'normal'))
+tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2 - 40)
+tutsGraficoTempo.write("Ano de " + str(anoRandom) , move=False, align="right", font=('Arial', 14, 'normal'))
 tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2)
 
 #linha vertical
@@ -171,7 +177,7 @@ while guiaReais*fatorAmpliacao < alturaGrafico:
     write( guiaReais , move=False, align="right", font=('Arial', 14, 'normal'))
     pendown()
     goto(comprimentoGrafico/2, -alturaGrafico/2 + novaGuia)
-    guiaReais += 50
+    guiaReais += 100
 
 #------------------------ corassaum dos dados de desenho ------------------------------#
 #--------------------------------------------------------------------------------------#
@@ -179,7 +185,7 @@ while guiaReais*fatorAmpliacao < alturaGrafico:
 
 datasPrecoCesta = ()
 datasSalarioMinimo = ()
-for x in range(0, qteColunas):
+for x in range(0, qteDatas):
     url = ''
     if datasPesquisa[x][0] < 10:
         url = 'http://172.246.16.27/pi/sexta_basica.php?mes=' + '0'+ str(datasPesquisa[x][0]) + '&ano=' + str(datasPesquisa[x][1])
@@ -219,7 +225,7 @@ for x in range(0, qteColunas):
 #pega os salarios
 url = 'http://172.246.16.27/pi/salario.php'
 salarios = simplejson.load(urllib.urlopen(url))
-for x in range(0, qteColunas):
+for x in range(0, qteDatas):
             #salarios[ano][mes]
     mesada = salarios[str(datasPesquisa[x][1])][str(datasPesquisa[x][0])]
 #    mesada = round( float(mesada), 1) #converte pra float com 1 casa decimal
@@ -229,66 +235,57 @@ for x in range(0, qteColunas):
 #--------------------------------------------------------------------------------------#
 
 qteCestas = ()
-for x in range(0, qteColunas):
+for x in range(0, qteDatas):
     valorTemp = int(float( datasSalarioMinimo[x] /datasPrecoCesta[x])) #qtas cestas compra o salario minimo
     qteCestas = qteCestas + (valorTemp, )
 
 
 #prepara os valores para desenhar o grafico
-penup()
-goto( -comprimentoGrafico/2, -alturaGrafico/2)
-larguraDoRetCesta = 75
-larguraDoRetProduto = 75 #soh pro codigo ficar legivel
-espaco = 50
-coordX = -comprimentoGrafico/2 + espaco
-
+larguraDoRetCesta = 3
+larguraDoRetProduto = 3 #soh pro codigo ficar legivel
+espaco =  comprimentoGrafico/qteDatas - larguraDoRetCesta           #espaco entre os pontos
+coordX = -comprimentoGrafico/2 + espaco - 10
 alturaEscrita = -alturaGrafico/2 - 20
 posEscrita = -comprimentoGrafico/2 + espaco + (larguraDoRetCesta)/2
 
-color("black")
-for x in range(0, len(datasPesquisa)):
-    #comeca a desenha o retangulo salario minimo
-    fillcolor( corSalario )
-    begin_fill()
+linhasDeInformacao = (datasSalarioMinimo, datasPrecoCesta)
+ordemCores = (corSalario, corQteCestas)
+
+pensize(4)
+#desenha as linhas
+for x in range(0, len(linhasDeInformacao) ):
+    color (ordemCores[x] )
+    fillcolor( ordemCores[x] )
+    
+    coordX = -comprimentoGrafico/2 + espaco - 10
+    alturaDesenho = linhasDeInformacao[x][0]*fatorAmpliacao
+    
     penup()
-    goto( coordX                    , -alturaGrafico/2)
+    goto(coordX, -alturaGrafico/2 + alturaDesenho)
     pendown()
-    altSalario = datasSalarioMinimo[x]* fatorAmpliacao
-    
-    goto( coordX                    , -alturaGrafico/2 + altSalario)
-    goto( coordX + larguraDoRetCesta, -alturaGrafico/2 + altSalario)
-    goto( coordX + larguraDoRetCesta, -alturaGrafico/2)
-    goto( coordX                    , -alturaGrafico/2)
-    end_fill()
-    
-    
-    #comeca a desenha o retangulo da qte de cestas que o salario compra, encima do salario
-    fillcolor( corQteCestas )
     begin_fill()
-    penup()
-    goto( coordX                    , -alturaGrafico/2)
-    pendown()
-    altQteCestas = datasPrecoCesta[x]* fatorAmpliacao* qteCestas[x]
-    
-    goto( coordX                    , -alturaGrafico/2 + altQteCestas)
-    goto( coordX + larguraDoRetCesta, -alturaGrafico/2 + altQteCestas)
-    goto( coordX + larguraDoRetCesta, -alturaGrafico/2)
-    goto( coordX                    , -alturaGrafico/2)
+    circle(3,360)
     end_fill()
-    
-    penup()
-    goto( coordX + larguraDoRetCesta/2 , -alturaGrafico/2 + altQteCestas/2)
-    write( str(qteCestas[x]) + " cesta(s)" , move=False, align="center", font=('Arial', 10, 'normal'))
-    
     coordX += larguraDoRetCesta + espaco
     
-    #escreve embaixo da tabela o nome das datas centralizado com as colunas
+    for y in range(1, qteDatas):
+        alturaDesenho = linhasDeInformacao[x][y]*fatorAmpliacao
+        goto(coordX, -alturaGrafico/2 + alturaDesenho)
+        pendown()
+        begin_fill()
+        circle(3,360)
+        end_fill()
+    
+        coordX += larguraDoRetCesta + espaco
+
+
+#escreve embaixo da tabela o nome das datas centralizado com as colunas
+color("black")
+for x in range(0, qteDatas):
     penup()
     goto( posEscrita , alturaEscrita)
-    texto = stringDoMes(datasPesquisa[x][0]) + " de " + str(datasPesquisa[x][1])
-    write( texto , move=False, align="center", font=('Arial', 14, 'normal'))
-
-
+    texto = stringDoMes(datasPesquisa[x][0])
+    write( texto , move = False, align = "center", font = ('Arial', 10, 'normal'))
     posEscrita += espaco + larguraDoRetCesta
 
 penup()
@@ -296,7 +293,7 @@ goto(-100, -alturaGrafico/2 - 50)
 fillcolor(corQteCestas)
 desenhaEPreencheQuadrado(50)
 goto(-125, -alturaGrafico/2 - 120)
-write( "Qte de cestas", move=False, align="center", font=('Arial', 14, 'normal'))
+write( "Valor da cesta", move=False, align="center", font=('Arial', 14, 'normal'))
 
 
 goto(100, -alturaGrafico/2 - 50)

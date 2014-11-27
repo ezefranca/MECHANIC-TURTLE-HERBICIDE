@@ -14,10 +14,10 @@ def modTupByIndex(tup, index, ins):
 
 #metodo/funcao pra segunda visualizacao
 def valorTotalDaCesta(valoresNumaData):
-    dataTotal = 0
+    total = 0
     for x in range(0, qte):
-        dataTotal += valoresNumaData[x]
-    return dataTotal
+        total += valoresNumaData[x]
+    return total
 
 def desenhaEPreencheQuadrado(tamanho):
     begin_fill()
@@ -25,7 +25,6 @@ def desenhaEPreencheQuadrado(tamanho):
         left(90)
         forward(tamanho)
     end_fill()
-
 
 
 def stringDoMes(numero): #nao sei fazer switch no python, cabo a luz e nao tem internet pra pesquisar
@@ -55,36 +54,6 @@ def stringDoMes(numero): #nao sei fazer switch no python, cabo a luz e nao tem i
         return "Dezembro"
     else:
         return "mes invalido"
-
-def stringDoProduto(numero):
-    if (numero == 0 ):
-        return "Açucar"
-    if (numero == 1 ):
-        return "Arroz"
-    if (numero == 2 ):
-        return "Banana Prata"
-    if (numero == 3 ):
-        return "Batata"
-    if (numero == 4 ):
-        return "Café em pó"
-    if (numero == 5 ):
-        return "Carne Bovina"
-    if (numero == 6 ):
-        return "Farinha de Trigo"
-    if (numero == 7 ):
-        return "Feijão"
-    if (numero == 8 ):
-        return "Leito tipo B"
-    if (numero == 9 ):
-        return "Manteiga"
-    if (numero == 10 ):
-        return "Óleo de Soja"
-    if (numero == 11 ):
-        return "Pão Francês"
-    if (numero == 12 ):
-        return "Tomate"
-    else:
-        return "produto invalido"
 
 cor0  = (251/255.0,  16/255.0,  34/255.0)
 cor1  = (252/255.0,  24/255.0, 128/255.0)
@@ -174,12 +143,14 @@ while guiaReais*fatorAmpliacao < alturaGrafico:
     goto(comprimentoGrafico/2, -alturaGrafico/2 + novaGuia)
     guiaReais += 50
 
+produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Batata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Pão Francês", "Tomate de mesa")
+
 #------------------------ corassaum dos dados de desenho ------------------------------#
 #--------------------------------------------------------------------------------------#
 #coisa com o BD aki e pega os valores no banco #
 produtoX = random.randrange(0, 13, 1)
 produtoXValores = ()
-produtoXNome = stringDoProduto (produtoX)
+produtoXNome = produtosCesta[ produtoX ]
 
 datas = ()
 for x in range(0, qteColunas):

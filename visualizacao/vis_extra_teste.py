@@ -14,10 +14,10 @@ def modTupByIndex(tup, index, ins):
 
 #metodo/funcao pra segunda visualizacao
 def valorTotalDaCesta(valoresNumaData):
-    dataTotal = 0
+    total = 0
     for x in range(0, qte):
-        dataTotal += valoresNumaData[x]
-    return dataTotal
+        total += valoresNumaData[x]
+    return total
 
 def desenhaEPreencheQuadrado(tamanho):
     begin_fill()
@@ -70,8 +70,8 @@ cor11 = ( 14/255.0,  38/255.0, 251/255.0)
 cor12 = ( 12/255.0,  91/255.0, 183/255.0)
 cores = (cor0, cor1, cor2, cor3, cor4, cor5, cor6, cor7, cor8, cor9, cor10, cor11, cor12)
 
-corQteCestas = cores[ random.randrange(0, 6, 1) ]
-corSalario = cores[ random.randrange(7, 13, 1)]
+corQteCestas = (random.randrange(0, 256, 1)/255.0 ,random.randrange(0, 256, 1)/255.0, random.randrange(0, 256, 1)/255.0 )
+
 
 #mesAno1 = (random.randrange(7, 13, 1), 1900 +random.randrange(  94, 101, 1) )
 #mesAno2 = (random.randrange(1, 13, 1), 1900 +random.randrange( 101, 108, 1) )
@@ -91,7 +91,7 @@ for x in range(0,12):
 
 
 #configuragoes da tabela
-fatorAmpliacao = 0.75    #<-valor mutavel
+fatorAmpliacao = 2.95   #<-valor mutavel
 
 alturaGrafico = 600      #valor da altura em pixels       #<-valor mutavel
 comprimentoGrafico = 700 #valor do comprimento em pixels  #<-valor mutavel
@@ -111,49 +111,10 @@ tracer(1, 1)
 penup()
 goto(0, 0)
 
-#linha horizontal
-tutsGraficoTempo = clone()
-tutsGraficoTempo.penup()
-tutsGraficoTempo.goto( -comprimentoGrafico/2 -100, -alturaGrafico/2)
-tutsGraficoTempo.pendown()
-tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2)
-tutsGraficoTempo.penup()
-tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2 - 40)
-tutsGraficoTempo.write("Ano de " + str(anoRandom) , move=False, align="right", font=('Arial', 14, 'normal'))
-tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2)
-
-#linha vertical
-left(90)
-tutsGraficoValor = clone()
-tutsGraficoValor.penup()
-tutsGraficoValor.goto(-comprimentoGrafico/2, -alturaGrafico/2 -100)
-tutsGraficoValor.pendown()
-tutsGraficoValor.goto( -comprimentoGrafico/2 , alturaGrafico/2)
-tutsGraficoValor.penup()
-tutsGraficoValor.goto( -comprimentoGrafico/2 +80, alturaGrafico/2)
-tutsGraficoValor.write("Reais (R$)" , move=False, align="right", font=('Arial', 14, 'normal'))
-tutsGraficoValor.goto( -comprimentoGrafico/2 , alturaGrafico/2)
-
-
-#escreve os valores a cada 50 reais pra termos nocao da proporcao
-penup()
-goto(-comprimentoGrafico/2, -alturaGrafico/2)
-
-guiaReais = 0
-while guiaReais*fatorAmpliacao < alturaGrafico:
-    novaGuia = guiaReais * fatorAmpliacao
-    penup()
-    goto(-comprimentoGrafico/2 -10, -alturaGrafico/2 + novaGuia)
-    write( guiaReais , move=False, align="right", font=('Arial', 14, 'normal'))
-    pendown()
-    goto(comprimentoGrafico/2, -alturaGrafico/2 + novaGuia)
-    guiaReais += 100
-
 #------------------------ corassaum dos dados de desenho ------------------------------#
 #--------------------------------------------------------------------------------------#
-#coisa com o BD aki e pega os valores no banco #
-
 datasPrecoCesta = ()
+datas = ()
 for x in range(0, qteDatas):
     url = ''
     if datasPesquisa[x][0] < 10:
@@ -184,44 +145,68 @@ for x in range(0, qteDatas):
     for x in range(0, qte):
         tuplaTemporaria = ( cesta_basica[x]['valor'], )
         dataValores = dataValores + tuplaTemporaria
-
+    
+    datas = datas + (dataValores, )
     dataValores = (valorTotalDaCesta(dataValores) ,)
 
     #monstrinho pra percorrer e desenha o grafico
     datasPrecoCesta = datasPrecoCesta + dataValores
 
-
-#pega os salarios
-url = 'http://172.246.16.27/pi/salario.php'
-salarios = simplejson.load(urllib.urlopen(url))
-datasSalarioMinimo = ()
-for x in range(0, qteDatas):
-            #salarios[ano][mes]
-    mesada = salarios[str(datasPesquisa[x][1])][str(datasPesquisa[x][0])]
-#    mesada = round( float(mesada), 1) #converte pra float com 1 casa decimal
-    mesada = int( float(mesada)) #converte pra int
-
-    datasSalarioMinimo = datasSalarioMinimo + (mesada , )
 #--------------------------------------------------------------------------------------#
+#linha horizontal
+tutsGraficoTempo = clone()
+tutsGraficoTempo.penup()
+tutsGraficoTempo.goto( -comprimentoGrafico/2 -100, -alturaGrafico/2)
+tutsGraficoTempo.pendown()
+tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2)
+tutsGraficoTempo.penup()
+tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2 - 40)
+tutsGraficoTempo.write("Ano de " + str(anoRandom) , move=False, align="right", font=('Arial', 14, 'normal'))
+tutsGraficoTempo.goto(comprimentoGrafico/2, -alturaGrafico/2)
 
-qteCestas = ()
-for x in range(0, qteDatas):
-    valorTemp = int(float( datasSalarioMinimo[x] /datasPrecoCesta[x])) #qtas cestas compra o salario minimo
-    qteCestas = qteCestas + (valorTemp, )
+#linha vertical
+left(90)
+tutsGraficoValor = clone()
+tutsGraficoValor.penup()
+tutsGraficoValor.goto(-comprimentoGrafico/2, -alturaGrafico/2 -100)
+tutsGraficoValor.pendown()
+tutsGraficoValor.goto( -comprimentoGrafico/2 , alturaGrafico/2)
+tutsGraficoValor.penup()
+tutsGraficoValor.goto( -comprimentoGrafico/2 +80, alturaGrafico/2)
+tutsGraficoValor.write("Reais (R$)" , move=False, align="right", font=('Arial', 14, 'normal'))
+tutsGraficoValor.goto( -comprimentoGrafico/2 , alturaGrafico/2)
+
+
+#escreve os valores a cada x reais pra termos nocao da proporcao
+penup()
+goto(-comprimentoGrafico/2, -alturaGrafico/2)
+
+#fatorAmpliacao = alguma conta loca baseado na altura do grafico e o maior valor da cesta
+guiaReais = 0
+while guiaReais*fatorAmpliacao < alturaGrafico:
+    novaGuia = guiaReais * fatorAmpliacao
+    penup()
+    goto(-comprimentoGrafico/2 -10, -alturaGrafico/2 + novaGuia)
+    write( guiaReais , move=False, align="right", font=('Arial', 14, 'normal'))
+    pendown()
+    goto(comprimentoGrafico/2, -alturaGrafico/2 + novaGuia)
+    guiaReais += 100
+
+
+
 
 
 #prepara os valores para desenhar o grafico
 larguraDoRetCesta = 3
-larguraDoRetProduto = 3 #soh pro codigo ficar legivel
 espaco =  comprimentoGrafico/qteDatas - larguraDoRetCesta           #espaco entre os pontos
 coordX = -comprimentoGrafico/2 + espaco - 10
-alturaEscrita = -alturaGrafico/2 - 20
-posEscrita = -comprimentoGrafico/2 + espaco + (larguraDoRetCesta)/2
 
-linhasDeInformacao = (datasSalarioMinimo, datasPrecoCesta)
-ordemCores = (corSalario, corQteCestas)
 
-pensize(4)
+
+linhasDeInformacao = (datasPrecoCesta, )
+ordemCores = (corQteCestas, )
+
+pensize(3)
 #desenha as linhas
 for x in range(0, len(linhasDeInformacao) ):
     color (ordemCores[x] )
@@ -249,6 +234,38 @@ for x in range(0, len(linhasDeInformacao) ):
         coordX += larguraDoRetCesta + espaco
 
 
+coordX = -comprimentoGrafico/2 + espaco - 10
+pensize(3)
+#desenha as linhas dos produtos, nao no mesmo 'for'de cima pq a informacao da te forma diferente
+#pra ganhar eficiencia poderia so reordenar a 'matriz', mas dependendo do tamanho do dado que vier talvez nao seja mais efficiente
+for x in range(0, len(datas[0]) ):
+    color ( cores[x] )
+    fillcolor( cores[x] )
+    
+    coordX = -comprimentoGrafico/2 + espaco - 10
+    alturaDesenho = datas[0][x]*fatorAmpliacao
+    
+    penup()
+    goto(coordX, -alturaGrafico/2 + alturaDesenho)
+    pendown()
+    begin_fill()
+    circle(3,360)
+    end_fill()
+    coordX += larguraDoRetCesta + espaco
+    
+    for y in range(1, len(datas)):
+        alturaDesenho = datas[y][x]*fatorAmpliacao
+        goto(coordX, -alturaGrafico/2 + alturaDesenho)
+        pendown()
+        begin_fill()
+        circle(3,360)
+        end_fill()
+        
+        coordX += larguraDoRetCesta + espaco
+
+
+alturaEscrita = -alturaGrafico/2 - 20
+posEscrita = -comprimentoGrafico/2 + espaco + (larguraDoRetCesta)/2
 #escreve embaixo da tabela o nome das datas centralizado com as colunas
 color("black")
 for x in range(0, qteDatas):
@@ -265,12 +282,12 @@ desenhaEPreencheQuadrado(50)
 goto(-125, -alturaGrafico/2 - 120)
 write( "Valor da cesta", move=False, align="center", font=('Arial', 14, 'normal'))
 
-
-goto(100, -alturaGrafico/2 - 50)
-fillcolor(corSalario)
-desenhaEPreencheQuadrado(50)
-goto(75, -alturaGrafico/2 - 120)
-write( "Salario" , move=False, align="center", font=('Arial', 14, 'normal'))
+#
+#goto(100, -alturaGrafico/2 - 50)
+#fillcolor(corSalario)
+#desenhaEPreencheQuadrado(50)
+#goto(75, -alturaGrafico/2 - 120)
+#write( "Salario" , move=False, align="center", font=('Arial', 14, 'normal'))
 
 
 done()

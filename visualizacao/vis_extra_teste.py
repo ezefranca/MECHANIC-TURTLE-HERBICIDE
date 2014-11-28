@@ -93,14 +93,14 @@ for x in range(0,12):
 #configuragoes da tabela
 fatorAmpliacao = 2.95   #<-valor mutavel
 
-alturaGrafico = 600      #valor da altura em pixels       #<-valor mutavel
-comprimentoGrafico = 700 #valor do comprimento em pixels  #<-valor mutavel
+alturaGrafico = 900      #valor da altura em pixels       #<-valor mutavel
+comprimentoGrafico = 800 #valor do comprimento em pixels  #<-valor mutavel
 qte = 13 #qte de itens na cesta
 qteDatas = len(datasPesquisa)
 
 
 #configura e posicia a turtle original
-screensize(1300,1000)
+screensize(2000,1100)
 color('black')
 pensize(1)
 #ht()
@@ -152,6 +152,8 @@ for x in range(0, qteDatas):
     #monstrinho pra percorrer e desenha o grafico
     datasPrecoCesta = datasPrecoCesta + dataValores
 
+
+
 #--------------------------------------------------------------------------------------#
 #linha horizontal
 tutsGraficoTempo = clone()
@@ -194,20 +196,48 @@ while guiaReais*fatorAmpliacao < alturaGrafico:
 
 
 
-
-
 #prepara os valores para desenhar o grafico
 larguraDoRetCesta = 3
 espaco =  comprimentoGrafico/qteDatas - larguraDoRetCesta           #espaco entre os pontos
 coordX = -comprimentoGrafico/2 + espaco - 10
 
 
-
 linhasDeInformacao = (datasPrecoCesta, )
-ordemCores = (corQteCestas, )
+ordemCores = ("black", )
+
+
+alturaEscrita = -alturaGrafico/2 - 20
+posEscrita = -comprimentoGrafico/2 + espaco + (larguraDoRetCesta)/2
+
+#escreve embaixo da tabela o nome das datas centralizado com as colunas
+color("black")
+for x in range(0, qteDatas):
+    penup()
+    goto( posEscrita , alturaEscrita)
+    texto = stringDoMes(datasPesquisa[x][0])
+    write( texto , move = False, align = "center", font = ('Arial', 10, 'normal'))
+    posEscrita += espaco + larguraDoRetCesta
+
+produtosCesta = ("Açúcar", "Arroz", "Banana Prata", "Batata", "Café em Pó", "Carne Bovina", "Farinha de Trigo", "Feijão",   "Leite tipo B", "Manteiga", "Óleo de Soja", "Pão Francês", "Tomate de mesa")
+
+#escreve legendas
+alturaEscrita = -alturaGrafico/2 - 70
+posEscrita = -comprimentoGrafico/2 +30
+color("black")
+for x in range(0, qte):
+    penup()
+    
+    goto( posEscrita + 10 , alturaEscrita + 30)
+    fillcolor(cores[x])
+    desenhaEPreencheQuadrado(20)
+    goto( posEscrita, alturaEscrita)
+    texto = produtosCesta[x]
+    write( texto , move = False, align = "center", font = ('Arial', 9, 'normal'))
+    posEscrita += espaco + larguraDoRetCesta +5
+
 
 pensize(3)
-#desenha as linhas
+#desenha as linhas dos dados
 for x in range(0, len(linhasDeInformacao) ):
     color (ordemCores[x] )
     fillcolor( ordemCores[x] )
@@ -262,32 +292,6 @@ for x in range(0, len(datas[0]) ):
         end_fill()
         
         coordX += larguraDoRetCesta + espaco
-
-
-alturaEscrita = -alturaGrafico/2 - 20
-posEscrita = -comprimentoGrafico/2 + espaco + (larguraDoRetCesta)/2
-#escreve embaixo da tabela o nome das datas centralizado com as colunas
-color("black")
-for x in range(0, qteDatas):
-    penup()
-    goto( posEscrita , alturaEscrita)
-    texto = stringDoMes(datasPesquisa[x][0])
-    write( texto , move = False, align = "center", font = ('Arial', 10, 'normal'))
-    posEscrita += espaco + larguraDoRetCesta
-
-penup()
-goto(-100, -alturaGrafico/2 - 50)
-fillcolor(corQteCestas)
-desenhaEPreencheQuadrado(50)
-goto(-125, -alturaGrafico/2 - 120)
-write( "Valor da cesta", move=False, align="center", font=('Arial', 14, 'normal'))
-
-#
-#goto(100, -alturaGrafico/2 - 50)
-#fillcolor(corSalario)
-#desenhaEPreencheQuadrado(50)
-#goto(75, -alturaGrafico/2 - 120)
-#write( "Salario" , move=False, align="center", font=('Arial', 14, 'normal'))
 
 
 done()

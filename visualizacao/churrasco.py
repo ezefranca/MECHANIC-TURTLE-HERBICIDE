@@ -13,36 +13,44 @@ def modTupByIndex(tup, index, ins):
     return tuple(tup[0:index]) + (ins,) + tuple(tup[index+1:])
 
 #metodo/funcao pra segunda visualizacao tambem
-def valorTotal(valoresNumaData):
+def valorTotal(valores):
     total = 0
-    for x in range(0, qte):
-        total += valoresNumaData[x]
+    for x in range(0, len(valores) ):
+        total += valores[x]
     return total
+
+
+# porcentagens dos precos de cada produto em uma data vindos do BD
+def conveteEmPorcentagem(valores):
+    total = valorTotal(valores)
+
+    porcentagens = ()
+    for x in range(0, len(valores) ):
+        tuplaTemporaria = (valores[x]*100/total, )
+        porcentagens = porcentagens + tuplaTemporaria
+    return porcentagens
+
 
 def converteValoresDoBancoEmPixelsPraDesenhar (valoresNumaData): #nome auto-explicativo
 
-    #valor total da cesta para determinar a % de cada item
-    dataTotal = valorTotal(valoresNumaData)
-
+#    #valor total da cesta para determinar a % de cada item
+#    dataTotal = valorTotal(valoresNumaData)
 
     # porcentagens dos precos de cada produto em uma data vindos do BD
-    dataPorcentagens= (0,)
-    for x in range(0, qte):
-        tuplaTemporaria = (valoresNumaData[x]*100/dataTotal,)
-        dataPorcentagens = dataPorcentagens+ tuplaTemporaria
+    dataPorcentagens = conveteEmPorcentagem(valoresNumaData)
 
 
     #porcentagens aditivas dos precos em cada lugar da tupla (tipo fibonacci sqn)
     #o primeiro valor precisa ser 0%
     #exemplo: (0%, 10%, 15%, 35%, 65%, 90%, 100%)
     porcents = 0
-    for x in range(1, qte + 1):
+    for x in range(0, qte):
         porcents += dataPorcentagens[x]
         dataPorcentagens = modTupByIndex(dataPorcentagens, x, porcents)
 
     #aki converte as %s em em valor de pixel para desenhar
     dataAlturas = (0,)
-    for x in range(1, qte + 1):
+    for x in range(0, qte):
         alturaTemp = ( (alturaTabela*dataPorcentagens[x])/100.0 , )
         dataAlturas = dataAlturas+ alturaTemp
 
@@ -118,6 +126,7 @@ for x in range(0, qte):
 #--------------------------------------------------------------------------------------#
 #coisa com o BD aki e pega os valores no banco #
 datas = ()
+porcentagensIndividuais = ()
 for x in range(0, qteColunas):
     url = 'http://172.246.16.27/pi/churrasco.php?ano=' + str(datasPesquisa[x])
 
@@ -136,10 +145,15 @@ for x in range(0, qteColunas):
         tuplaTemporaria = ( cesta_churrasco[x]['valor'], )
         dataValores = dataValores + tuplaTemporaria
 
+    porcentagensIndividuais =  porcentagensIndividuais + (conveteEmPorcentagem(dataValores), )
+
+
     dataValores = converteValoresDoBancoEmPixelsPraDesenhar(dataValores)
 
-    #monstrinho pra percorrer e desenha a tabela
+    #monstrinhos pra percorrer e desenha a tabela
     datas = datas + (dataValores, )
+
+
 
 #--------------------------------------------------------------------------------------#
 
@@ -194,6 +208,24 @@ for viera in turtles:
     write( produtosChurrasco[nivel], move=False, align="right", font=('Arial', 18, 'normal'))
 
     nivel += 1
+
+
+#escreve os numeros de %s pra ficar mais legivel e bonito
+#feito separado do de desenha pra nao ficar uma mistureba
+nivel = 0
+for viera in turtles:
+    distAtual = cBase/2
+    viera.penup()
+    viera.color("black")
+    for coluna in range(0, qteColunas):
+        alturaEscrita = (datas[coluna][nivel] + datas[coluna][nivel +1])/2 + 5
+        viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 - alturaEscrita )
+        distAtual += space + cBase
+        texto = str( porcentagensIndividuais[coluna][nivel] )
+        viera.write( texto , move=False, align="center", font=('Arial', 10, 'normal'))
+
+    nivel += 1
+
 
 done()
 

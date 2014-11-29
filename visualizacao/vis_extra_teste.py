@@ -13,7 +13,7 @@ def modTupByIndex(tup, index, ins):
     return tuple(tup[0:index]) + (ins,) + tuple(tup[index+1:])
 
 #metodo/funcao pra segunda visualizacao
-def valorTotalDaCesta(valoresNumaData):
+def valorTotal(valoresNumaData):
     total = 0
     for x in range(0, qte):
         total += valoresNumaData[x]
@@ -147,7 +147,7 @@ for x in range(0, qteDatas):
         dataValores = dataValores + tuplaTemporaria
     
     datas = datas + (dataValores, )
-    dataValores = (valorTotalDaCesta(dataValores) ,)
+    dataValores = (valorTotal(dataValores) ,)
 
     #monstrinho pra percorrer e desenha o grafico
     datasPrecoCesta = datasPrecoCesta + dataValores

@@ -221,7 +221,7 @@ for viera in turtles:
         alturaEscrita = (datas[coluna][nivel] + datas[coluna][nivel +1])/2 + 5
         viera.goto( -comprimentoTabela/2 + distAtual, alturaTabela/2 - alturaEscrita )
         distAtual += space + cBase
-        texto = str( porcentagensIndividuais[coluna][nivel] )
+        texto = str( porcentagensIndividuais[coluna][nivel] ) + "%"
         viera.write( texto , move=False, align="center", font=('Arial', 10, 'normal'))
 
     nivel += 1
